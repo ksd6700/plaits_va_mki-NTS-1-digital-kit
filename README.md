@@ -1,6 +1,6 @@
-# Mutable Instruments To KORG NTS-1 mkI
+# plaits_va_mki | KORG NTS-1 digital kit
 
-This workspace is set up for an NTS-1 mkI porting experiment.
+Mutable Instruments DSP porting experiment for the KORG NTS-1 mkI digital kit.
 
 ## Current Target
 
