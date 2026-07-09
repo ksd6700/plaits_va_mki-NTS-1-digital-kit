@@ -1,6 +1,11 @@
 # plaits_va_mki | KORG NTS-1 digital kit
 
-Mutable Instruments DSP porting experiment for the KORG NTS-1 mkI digital kit.
+An experimental Mutable Instruments DSP port for the KORG Nu:Tekt NTS-1 mkI
+digital kit.
+
+This is a ready-to-load custom oscillator unit, not a sample pack. The NTS-1
+runs the oscillator in real time through KORG's logue SDK custom oscillator
+slot.
 
 ## Download
 
@@ -16,31 +21,234 @@ SHA-256:
 b7a7db8876a9bdcfebedd56504d3c8afa9c4cb847276d3e9d301314f2cfe50e2
 ```
 
+## What Is This?
+
+`VA-MKI` is a small NTS-1 mkI oscillator built from the Mutable Instruments
+Plaits `VirtualAnalogEngine`.
+
+It is not a complete Plaits clone. Plaits contains many synthesis models; this
+project ports one practical first slice: the virtual-analog model based on two
+continuously variable waveforms, detuning, and hard-sync-style variants.
+
+The goal is to bring a piece of the Plaits sound world into the tiny NTS-1 mkI
+oscillator slot while keeping the unit small, buildable, and easy to test.
+
+## Background
+
+Mutable Instruments Plaits is a Eurorack macro-oscillator with 16 synthesis
+models. The original Plaits design uses floating-point DSP code and emphasizes
+band-limited synthesis at the base audio rate.
+
+This project uses the Plaits virtual-analog engine, whose original model is
+centered around:
+
+- two detuned variable waveforms
+- `TIMBRE` as a variable square/pulse/hard-sync control
+- `MORPH` as a variable saw/triangle/notch control
+- an `AUX` output carrying a related hard-sync variant
+
+KORG's logue SDK allows NTS-1 mkI units to be loaded as custom oscillators,
+modulation effects, delay effects, or reverb effects. This project targets the
+custom oscillator path: the unit receives pitch and parameter information from
+the NTS-1 and writes an audio buffer back to the synth engine.
+
+## Sound Character
+
+Expect a digital virtual-analog voice rather than a plain saw or square wave.
+The interesting part is how the controls slide between pulse width, saw shape,
+notch width, oscillator detuning, and sync-like tones.
+
+At gentle settings it can behave like a compact VA oscillator. Pushing `Shape`,
+`Shift-Shape`, and `Harm` brings out thinner pulses, wider notches, interval
+detuning, and brighter hard-sync edges. The `OutAux` parameter lets you blend
+between the main Plaits OUT-style signal and the AUX-style variant.
+
+## Controls
+
+| NTS-1 Control | Internal Mapping | What It Does |
+| --- | --- | --- |
+| Shape | Plaits `timbre` | Variable square/pulse and sync-like brightness |
+| Shift-Shape | Plaits `morph` | Variable saw/triangle/notch shape |
+| Harm | Plaits `harmonics` | Detuning/spread between the two waves |
+| OutAux | OUT/AUX crossfade | Blends the main and alternate engine outputs |
+| Level | Output gain | Trims the oscillator level |
+| Fine | Pitch trim | +/- 1 semitone tuning trim |
+
 ## Current Target
 
-The first scaffold is:
-
-- `ports/plaits_va_mki`
+- Project: `ports/plaits_va_mki`
 - KORG platform: `nutekt-digital`
 - Unit type: `osc`
 - Output package: `.ntkdigunit`
 - Mutable source: Plaits `VirtualAnalogEngine`
+- Display name on the NTS-1: `VA-MKI`
 
-This is a practical first slice rather than a full module clone. It avoids the
-full Plaits `Voice`, which registers 24 engines and is likely too large for a
-comfortable mkI oscillator unit.
+## Build From Source
 
-## External Sources
+The repository includes the ready-to-load file in `dist/`, so building is only
+needed if you want to modify the source.
+
+External source trees are expected locally:
 
 - `external/logue-sdk`: KORG logue SDK
 - `external/eurorack`: Mutable Instruments eurorack source with submodules
 
-## Next Milestones
+Build steps:
 
-1. Install or locate the KORG-supported `arm-none-eabi` toolchain.
-2. Initialize KORG SDK submodules for CMSIS.
-3. Build `ports/plaits_va_mki` and check binary size against the 32 KB mkI
-   oscillator linker region.
-4. If it fits, test the `.ntkdigunit` on the NTS-1 with Librarian or logue-cli.
-5. If it does not fit, remove features from the selected engine or hand-port a
-   smaller oscillator core.
+```sh
+cd ports/plaits_va_mki
+make
+make install
+```
+
+The generated file is:
+
+```text
+ports/plaits_va_mki/plaits_va_mki.ntkdigunit
+```
+
+## Notes And Limits
+
+- This is experimental and unofficial.
+- This is not a full Plaits port.
+- Other Plaits engines, such as FM, wavetable, speech, strings, modal, and
+  drums, are not included.
+- The NTS-1 mkI oscillator environment is smaller and more constrained than the
+  original Plaits hardware, so this project starts with one lightweight model.
+- Back up your NTS-1 custom unit slots before loading experimental units.
+
+## License And Naming
+
+Mutable Instruments' STM32 firmware code is MIT licensed. KORG logue SDK
+templates are BSD-3-Clause licensed.
+
+The unit is named `VA-MKI` rather than using the original product name. This is
+intentional: it keeps the project clearly marked as an unofficial derivative
+experiment, not an official Mutable Instruments or KORG release.
+
+## References
+
+- [Mutable Instruments Plaits documentation](https://pichenettes.github.io/mutable-instruments-documentation/modules/plaits/)
+- [Mutable Instruments eurorack source](https://github.com/pichenettes/eurorack)
+- [KORG logue SDK](https://korginc.github.io/logue-sdk/)
+- [KORG logue-sdk repository](https://github.com/korginc/logue-sdk)
+
+---
+
+# 日本語
+
+これは KORG Nu:Tekt NTS-1 mkI digital kit 向けの、実験的な Mutable
+Instruments DSP 移植プロジェクトです。
+
+サンプル音源ではなく、NTS-1 の中でリアルタイムに発音するカスタム・
+オシレーターです。KORG logue SDK の oscillator unit として読み込みます。
+
+## ダウンロード
+
+NTS-1 mkI で試す場合は、このファイルをダウンロードしてください。
+
+- [`plaits_va_mki.ntkdigunit`](https://github.com/ksd6700/plaits_va_mki-NTS-1-digital-kit/raw/main/dist/plaits_va_mki.ntkdigunit)
+
+ダウンロードした `.ntkdigunit` を KORG NTS-1 Librarian で読み込んでください。
+
+## これは何？
+
+`VA-MKI` は、Mutable Instruments Plaits の `VirtualAnalogEngine` を
+NTS-1 mkI 用に小さく包んだカスタム・オシレーターです。
+
+Plaits 全体の完全移植ではありません。Plaits には多数のシンセシスモデルが
+ありますが、このプロジェクトでは最初の実用的な一歩として、2つの可変波形、
+デチューン、ハードシンク風の派生出力を持つ virtual analog モデルだけを
+移植しています。
+
+## 背景
+
+Mutable Instruments Plaits は Eurorack のマクロ・オシレーターです。16種類の
+シンセシスモデルを持ち、浮動小数点 DSP とバンドリミットされた合成を重視した
+設計になっています。
+
+今回使っている virtual analog モデルは、ざっくり言うと次のような音作りです。
+
+- 2つのデチューン可能な可変波形
+- `TIMBRE`: 可変スクエア/パルス/ハードシンク風の明るさ
+- `MORPH`: 三角波からノッチ付きソーへ変化する可変ソー
+- `AUX`: メイン出力とは違うハードシンク風の派生出力
+
+一方、NTS-1 mkI は KORG logue SDK によって custom oscillator を読み込めます。
+このユニットは NTS-1 からピッチとパラメータを受け取り、音声バッファに波形を
+書き戻すことで発音します。フィルター、EG、FX などは NTS-1 側のキャラクターが
+乗ります。
+
+## 音のキャラクター
+
+素の鋸波や矩形波というより、デジタルらしい virtual analog の音です。細い
+パルス、ノッチの広いソー、2オシレーターのデチューン、ハードシンク風の鋭さが
+連続的に変化します。
+
+穏やかな設定では小さな VA オシレーターとして使えます。`Shape`、
+`Shift-Shape`、`Harm` を動かしていくと、細いパルス、明るいノッチ、音程間隔の
+あるデチューン、シンク系のエッジが出てきます。`OutAux` は Plaits の OUT 的な
+信号と AUX 的な派生信号をクロスフェードするためのパラメータです。
+
+## 操作
+
+| NTS-1 の操作 | 内部の割り当て | 内容 |
+| --- | --- | --- |
+| Shape | Plaits `timbre` | 可変スクエア/パルス、シンク風の明るさ |
+| Shift-Shape | Plaits `morph` | 可変ソー/三角波/ノッチの形 |
+| Harm | Plaits `harmonics` | 2つの波形のデチューン/広がり |
+| OutAux | OUT/AUX クロスフェード | メイン出力と派生出力を混ぜる |
+| Level | 出力ゲイン | 音量調整 |
+| Fine | ピッチ微調整 | +/- 1 semitone のチューニング |
+
+## 現在のターゲット
+
+- プロジェクト: `ports/plaits_va_mki`
+- KORG platform: `nutekt-digital`
+- ユニット種別: `osc`
+- 出力形式: `.ntkdigunit`
+- Mutable 側の元ソース: Plaits `VirtualAnalogEngine`
+- NTS-1 上の表示名: `VA-MKI`
+
+## ソースからビルドする場合
+
+すぐ試すだけなら `dist/` の `.ntkdigunit` を使えば大丈夫です。ソースを変更したい
+場合だけビルドしてください。
+
+ローカルには次の外部ソースが必要です。
+
+- `external/logue-sdk`: KORG logue SDK
+- `external/eurorack`: Mutable Instruments eurorack source with submodules
+
+ビルド手順:
+
+```sh
+cd ports/plaits_va_mki
+make
+make install
+```
+
+生成されるファイル:
+
+```text
+ports/plaits_va_mki/plaits_va_mki.ntkdigunit
+```
+
+## 注意点
+
+- 実験的な非公式プロジェクトです。
+- Plaits の完全移植ではありません。
+- FM、wavetable、speech、strings、modal、drums などの他モデルは入っていません。
+- NTS-1 mkI の oscillator 環境は元の Plaits ハードウェアより小さいため、まずは
+  軽くて扱いやすい1モデルだけを移植しています。
+- 実験的な unit を読み込む前に、NTS-1 の custom unit スロットをバックアップして
+  おくと安心です。
+
+## ライセンスと名前について
+
+Mutable Instruments の STM32 ファームウェアコードは MIT ライセンスです。KORG
+logue SDK のテンプレートは BSD-3-Clause ライセンスです。
+
+ユニット名を元製品名ではなく `VA-MKI` にしているのは意図的です。これは公式の
+Mutable Instruments / KORG リリースではなく、非公式の派生実験であることを
+明確にするためです。
