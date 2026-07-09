@@ -2,6 +2,20 @@
 
 Mutable Instruments DSP porting experiment for the KORG NTS-1 mkI digital kit.
 
+## Download
+
+To try the oscillator on an NTS-1 mkI, download:
+
+- [`dist/plaits_va_mki.ntkdigunit`](dist/plaits_va_mki.ntkdigunit)
+
+Load the `.ntkdigunit` file with KORG NTS-1 Librarian.
+
+SHA-256:
+
+```text
+b7a7db8876a9bdcfebedd56504d3c8afa9c4cb847276d3e9d301314f2cfe50e2
+```
+
 ## Current Target
 
 The first scaffold is:
