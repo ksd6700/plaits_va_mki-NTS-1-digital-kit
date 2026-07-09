@@ -1,0 +1,19 @@
+{
+    "header" : 
+    {
+        "platform" : "nutekt-digital",
+        "module" : "osc",
+        "api" : "1.1-0",
+        "dev_id" : 0,
+        "prg_id" : 0,
+        "version" : "0.1-0",
+        "name" : "VA-MKI",
+        "num_param" : 4,
+        "params" : [
+            ["Harm",    0, 100, "%"],
+            ["OutAux",  0, 100, "%"],
+            ["Level",   0, 100, "%"],
+            ["Fine", -100, 100, "%"]
+          ]
+    }
+}

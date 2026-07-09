@@ -1,0 +1,6 @@
+external/
+
+ports/*/build/
+ports/**/*.ntkdigunit
+
+.DS_Store
