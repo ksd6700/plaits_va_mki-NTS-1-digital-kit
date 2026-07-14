@@ -1,13 +1,13 @@
 {
     "header" : 
     {
-        "platform" : "nutekt-digital",
+        "platform" : "prologue",
         "module" : "osc",
         "api" : "1.1-0",
         "dev_id" : 0,
         "prg_id" : 0,
         "version" : "0.2-0",
-        "name" : "VA-MKI",
+        "name" : "VA-PRLG",
         "num_param" : 4,
         "params" : [
             ["Harm",    0, 100, "%"],

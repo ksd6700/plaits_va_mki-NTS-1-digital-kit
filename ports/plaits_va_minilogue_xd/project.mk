@@ -2,7 +2,7 @@
 # Project Customization
 # #############################################################################
 
-PROJECT = plaits_va_mki
+PROJECT = plaits_va_minilogue_xd
 
 UCSRC =
 

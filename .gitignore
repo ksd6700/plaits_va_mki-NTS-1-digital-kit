@@ -2,5 +2,8 @@ external/
 
 ports/*/build/
 ports/**/*.ntkdigunit
+ports/**/*.mnlgxdunit
+ports/**/*.prlgunit
+ports/**/*.nts1mkiiunit
 
 .DS_Store

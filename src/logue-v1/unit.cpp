@@ -1,4 +1,4 @@
-// NTS-1 mkI wrapper for a small Mutable Instruments Plaits-derived engine.
+// logue SDK v1 oscillator wrapper for a small Plaits-derived engine.
 //
 // Mutable Instruments DSP code is MIT licensed. KORG SDK template code is
 // BSD-3-Clause. See this repository's README for source links and naming notes.
@@ -17,6 +17,8 @@
 namespace {
 
 constexpr size_t kAllocatorSize = 512;
+constexpr float kMinLevel = 0.5f;
+constexpr float kMaxLevel = 2.0f;
 
 alignas(plaits::VirtualAnalogEngine) uint8_t engine_storage[sizeof(plaits::VirtualAnalogEngine)];
 uint8_t allocator_memory[kAllocatorSize];
@@ -56,6 +58,10 @@ float bipolar_percent_to_float(uint16_t value) {
   return (static_cast<int32_t>(value) - 100) * 0.01f;
 }
 
+float level_from_percent(uint16_t value) {
+  return kMinLevel + percent_to_float(value) * (kMaxLevel - kMinLevel);
+}
+
 float pitch_to_midi_note(uint16_t pitch) {
   const float note = static_cast<float>(pitch >> 8);
   const float fine = static_cast<float>(pitch & 0xff) * (1.0f / 256.0f);
@@ -76,7 +82,7 @@ void init_engine() {
   state.params.harmonics = 0.5f;
   state.params.accent = 0.8f;
   state.aux_mix = 0.0f;
-  state.level = 0.65f;
+  state.level = kMaxLevel;
   state.fine_semitones = 0.0f;
   state.initialized = true;
   state.note_gate = false;
@@ -154,7 +160,7 @@ void OSC_PARAM(uint16_t index, uint16_t value) {
       break;
 
     case k_user_osc_param_id3:
-      state.level = 0.2f + percent_to_float(value) * 0.8f;
+      state.level = level_from_percent(value);
       break;
 
     case k_user_osc_param_id4:
